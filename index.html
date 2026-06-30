@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organize - Finanças Pessoais</title>
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Container do Smartphone para Visualização em Desktop -->
+  <div class="phone-frame">
+    <div class="phone-screen">
+      
+      <!-- ================= TELA 1: DASHBOARD ================= -->
+      <section id="screen-dashboard" class="app-screen active">
+        <!-- Cabeçalho do App -->
+        <header class="app-header">
+          <div class="user-info">
+            <span class="greeting">Olá, Usuário</span>
+            <span class="date-label" id="current-month-year">Junho, 2026</span>
+          </div>
+          <div class="avatar">U</div>
+        </header>
+
+        <!-- Indicador Principal "Sobrou" -->
+        <div class="balance-card">
+          <span class="balance-title">Disponível para Investir</span>
+          <h1 class="balance-value" id="dashboard-leftover">R$ 0,00</h1>
+          <div class="balance-trend">
+            <span class="trend-icon">📈</span>
+            <span id="savings-rate-label">0% economizado</span>
+          </div>
+        </div>
+
+        <!-- Indicadores de Fluxo (Receitas vs Despesas) -->
+        <div class="flow-container">
+          <div class="flow-card income">
+            <div class="flow-icon">↙</div>
+            <div class="flow-details">
+              <span class="flow-title">Entradas</span>
+              <span class="flow-value" id="dashboard-income">R$ 0,00</span>
+            </div>
+          </div>
+          <div class="flow-card expense">
+            <div class="flow-icon">↗</div>
+            <div class="flow-details">
+              <span class="flow-title">Saídas</span>
+              <span class="flow-value" id="dashboard-expense">R$ 0,00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Distribuição por Categoria -->
+        <div class="section-container">
+          <h3 class="section-title">Distribuição de Gastos</h3>
+          <div class="categories-list" id="categories-progress-container">
+            <!-- Gerado dinamicamente pelo JS -->
+          </div>
+        </div>
+
+        <!-- Últimos Lançamentos -->
+        <div class="section-container last-section">
+          <div class="section-header">
+            <h3 class="section-title">Últimos Lançamentos</h3>
+            <button class="text-button" id="btn-see-all">Ver tudo</button>
+          </div>
+          <div class="transactions-list" id="dashboard-recent-transactions">
+            <!-- Gerado dinamicamente pelo JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TELA 2: HISTÓRICO ================= -->
+      <section id="screen-history" class="app-screen">
+        <header class="screen-header">
+          <button class="back-button" id="btn-history-back">←</button>
+          <h2>Histórico do Mês</h2>
+          <div class="placeholder-spacer"></div>
+        </header>
+
+        <!-- Filtros Rápidos -->
+        <div class="filter-bar">
+          <button class="filter-pill active" data-filter="ALL">Todos</button>
+          <button class="filter-pill" data-filter="ALIMENTACAO">Alimentação</button>
+          <button class="filter-pill" data-filter="MERCADO">Mercado</button>
+          <button class="filter-pill" data-filter="TRANSPORTE">Transporte</button>
+          <button class="filter-pill" data-filter="OUTROS">Outros</button>
+        </div>
+
+        <!-- Lista Completa de Lançamentos -->
+        <div class="history-container">
+          <div class="transactions-list" id="history-transactions-list">
+            <!-- Gerado dinamicamente pelo JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= GAVETA / BOTTOM SHEET: CADASTRO ================= -->
+      <div class="bottom-sheet-overlay" id="add-sheet-overlay">
+        <div class="bottom-sheet" id="add-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-header">
+            <h3>Novo Lançamento</h3>
+            <button class="close-sheet-btn" id="btn-close-add">✕</button>
+          </div>
+          
+          <!-- Seletor de Tipo (Receita vs Despesa) -->
+          <div class="type-selector">
+            <button class="type-btn active" id="type-expense" data-type="EXPENSE">Despesa</button>
+            <button class="type-btn" id="type-income" data-type="INCOME">Receita</button>
+          </div>
+
+          <form id="add-transaction-form" autocomplete="off">
+            <!-- Input de Valor Principal -->
+            <div class="amount-input-container">
+              <span class="currency-symbol">R$</span>
+              <input type="number" id="add-amount" placeholder="0,00" step="0.01" required min="0.01">
+            </div>
+
+            <!-- Grade de Categorias -->
+            <div class="category-selector-container">
+              <span class="field-label">Selecione a Categoria</span>
+              <div class="category-grid" id="category-selector-grid">
+                <!-- Alterado dinamicamente com base no tipo -->
+              </div>
+            </div>
+
+            <!-- Input Opcional de Descrição -->
+            <div class="input-group">
+              <label for="add-description" class="field-label">Descrição (opcional)</label>
+              <input type="text" id="add-description" placeholder="Ex: Café da manhã">
+            </div>
+
+            <!-- Botão de Confirmação -->
+            <button type="submit" class="submit-btn">Confirmar Lançamento</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ================= GAVETA / BOTTOM SHEET: EDIÇÃO ================= -->
+      <div class="bottom-sheet-overlay" id="edit-sheet-overlay">
+        <div class="bottom-sheet" id="edit-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-header">
+            <h3>Editar Lançamento</h3>
+            <button class="close-sheet-btn" id="btn-close-edit">✕</button>
+          </div>
+          
+          <!-- Tipo Estático (Apenas leitura para consistência de fluxo) -->
+          <div class="type-display" id="edit-type-display">
+            Despesa
+          </div>
+
+          <form id="edit-transaction-form" autocomplete="off">
+            <input type="hidden" id="edit-id">
+            
+            <!-- Input de Valor Principal -->
+            <div class="amount-input-container">
+              <span class="currency-symbol">R$</span>
+              <input type="number" id="edit-amount" placeholder="0,00" step="0.01" required min="0.01">
+            </div>
+
+            <!-- Grade de Categorias -->
+            <div class="category-selector-container">
+              <span class="field-label">Selecione a Categoria</span>
+              <div class="category-grid" id="edit-category-selector-grid">
+                <!-- Gerado dinamicamente -->
+              </div>
+            </div>
+
+            <!-- Input Opcional de Descrição -->
+            <div class="input-group">
+              <label for="edit-description" class="field-label">Descrição (opcional)</label>
+              <input type="text" id="edit-description" placeholder="Ex: Supermercado">
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="button-row">
+              <button type="button" class="delete-btn" id="btn-delete-transaction">✕ Excluir</button>
+              <button type="submit" class="submit-btn flex-grow">Salvar Alterações</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ================= MENU INFERIOR PERSISTENTE (TAB BAR) ================= -->
+      <nav class="bottom-nav">
+        <button class="nav-item active" id="nav-dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </button>
+        
+        <!-- Botão FAB Centralizado de Lançamento Rápido -->
+        <button class="fab-btn" id="btn-fab-add">
+          <span>+</span>
+        </button>
+
+        <button class="nav-item" id="nav-history">
+          <span class="nav-icon">📜</span>
+          <span class="nav-label">Histórico</span>
+        </button>
+      </nav>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
